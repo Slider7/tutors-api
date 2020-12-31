@@ -15,19 +15,19 @@ include_once '../objects/tutor.php';
     
     $tutor = new Tutor($db);
     
-    // get posted data
-    $data = json_decode(file_get_contents("php://input"));
+    //$data = json_decode(file_get_contents('php://input'));
+    $data = $_POST;
     
     // make sure data is not empty
     if(
-        !empty($data->name) &&
-        !empty($data->age) &&
-        !empty($data->subj_id)
+        !empty($data['name']) &&
+        !empty($data['age']) &&
+        !empty($data['subj_id'])
     ){
-        $tutor->t_name = $data->name;
-        $tutor->age = $data->age;
+        $tutor->name = $data['name'];
+        $tutor->age = $data['age'];
         $tutor->rating = 0;
-        $tutor->subj_id = $data->subj_id;
+        $tutor->subj_id = $data['subj_id'];
     
         // create the tutor
         if($tutor->create()){
@@ -45,6 +45,7 @@ include_once '../objects/tutor.php';
     else{
         // set response code - 400 bad request
         http_response_code(400);
-        echo json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
+        echo $data . json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
     }
+
 ?>
