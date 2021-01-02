@@ -37,6 +37,40 @@ class Tutor
     return $stmt;
   }
 
+  // используется при заполнении формы обновления товара 
+  function readOne()
+  {
+    // запрос для чтения одной записи (тьютора) 
+    $query = "SELECT * FROM tutors_view t 
+               WHERE t.id = ?
+               LIMIT 0,1";
+
+    // подготовка запроса 
+    $stmt = $this->conn->prepare($query);
+
+    // привязываем id тьютора, который будет обновлен 
+    $stmt->bindParam(1, $this->id);
+    // выполняем запрос 
+    $stmt->execute();
+    // получаем извлеченную строку 
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (isset($row['name'])) {
+      // установим значения свойств объекта
+      $this->name = $row['name'];
+      $this->phone = $row['phone'];
+      $this->age = $row['age'];
+      $this->rating = $row['rating'];
+      $this->lang = $row['lang'];
+      $this->stage = $row['stage'];
+      $this->subject1 = $row['subject1'];
+      $this->subject2 = $row['subject2'];
+      $this->subject3 = $row['subject3'];
+      $this->description = $row['description'];
+      $this->subjects = $row['subjects'];
+    }
+  }
+
   // create tutor
   function create()
   {
