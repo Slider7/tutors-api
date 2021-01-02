@@ -1,72 +1,86 @@
 <?php
-class Tutor{
-    // database connection and table name
-    private $conn;
-    private $table_name = "tutors";
-  
-    // object properties
-    public $id;
-    public $name;
-    public $subj_id;
-    public $age;
-    public $rating;
-  
-    // constructor with $db as database connection
-    public function __construct($db){
-        $this->conn = $db;
-    }
+class Tutor
+{
+  // database connection and table name
+  private $conn;
+  private $table_name = "tutors";
 
-    function read(){
-        // select all query
-        $query = "SELECT
-                    s.subj_name as subj_name, t.t_id as id, t.t_name as name, t.age, t.rating, t.subj_id
-                FROM
-                    " . $this->table_name . " t
-                    LEFT JOIN
-                        subjects s
-                            ON t.subj_id = s.subj_id
-                ORDER BY
-                    t.t_name";
-    
-        // prepare query statement
-        $stmt = $this->conn->prepare($query);
-        // execute query
-        $stmt->execute();
+  // object properties
+  public $id;
+  public $name;
+  public $phone;
+  public $stage;
+  public $age;
+  public $rating;
+  public $lang;
+  public $type;
+  public $subjects;
+  public $subject1;
+  public $subject2;
+  public $subject3;
+  public $description;
 
-        return $stmt;
-    }
 
-    // create tutor
-    function create(){
+  // constructor with $db as database connection
+  public function __construct($db)
+  {
+    $this->conn = $db;
+  }
+
+  // read all tutors with subjects
+  function read()
+  {
+    $query = "SELECT * FROM tutors_view";
+    $stmt = $this->conn->prepare($query);
+    $stmt->execute();
+
+    return $stmt;
+  }
+
+  // create tutor
+  function create()
+  {
     // query to insert record
     $query = "INSERT INTO
                 " . $this->table_name . "
             SET
-                t_name=:name, age=:age, subj_id=:subj_id, rating=:rating";
-  
+                name=:name, phone=:phone, age=:age, rating=:rating, type=:type, lang=:lang, stage=:stage,
+                subject1=:subject1, subject2=:subject2, subject3=:subject3, description=:description";
+
     // prepare query
     $stmt = $this->conn->prepare($query);
-  
+
     // sanitize
-    $this->name=htmlspecialchars(strip_tags($this->name));
-    $this->age=htmlspecialchars(strip_tags($this->age));
-    $this->rating=htmlspecialchars(strip_tags($this->rating));
-    $this->subj_id=htmlspecialchars(strip_tags($this->subj_id));
-  
+    $this->name = htmlspecialchars(strip_tags($this->name));
+    $this->phone = htmlspecialchars(strip_tags($this->phone));
+    $this->age = htmlspecialchars(strip_tags($this->age));
+    $this->rating = htmlspecialchars(strip_tags($this->rating));
+    $this->lang = htmlspecialchars(strip_tags($this->lang));
+    $this->type = htmlspecialchars(strip_tags($this->type));
+    $this->stage = htmlspecialchars(strip_tags($this->stage));
+    $this->subject1 = htmlspecialchars(strip_tags($this->subject1));
+    $this->subject2 = htmlspecialchars(strip_tags($this->subject2));
+    $this->subject3 = htmlspecialchars(strip_tags($this->subject3));
+    $this->description = htmlspecialchars(strip_tags($this->description));
+
     // bind values
     $stmt->bindParam(":name", $this->name);
+    $stmt->bindParam(":phone", $this->phone);
     $stmt->bindParam(":age", $this->age);
     $stmt->bindParam(":rating", $this->rating);
-    $stmt->bindParam(":subj_id", $this->subj_id);
- 
-  
+    $stmt->bindParam(":lang", $this->lang);
+    $stmt->bindParam(":type", $this->type);
+    $stmt->bindParam(":stage", $this->stage);
+    $stmt->bindParam(":subject1", $this->subject1);
+    $stmt->bindParam(":subject2", $this->subject2);
+    $stmt->bindParam(":subject3", $this->subject3);
+    $stmt->bindParam(":description", $this->description);
+
     // execute query
-    if($stmt->execute()){
-        return true;
+    if ($stmt->execute()) {
+      return true;
     }
-  
+
     return false;
-      
+  }
 }
-}
-?>

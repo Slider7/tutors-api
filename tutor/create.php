@@ -5,47 +5,52 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: POST");
 header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
-  
+
 // get database connection
 include_once '../config/database.php';
 include_once '../objects/tutor.php';
-  
-    $database = new Database();
-    $db = $database->getConnection();
-    
-    $tutor = new Tutor($db);
-    
-    //$data = json_decode(file_get_contents('php://input'));
-    $data = $_POST;
-    
-    // make sure data is not empty
-    if(
-        !empty($data['name']) &&
-        !empty($data['age']) &&
-        !empty($data['subj_id'])
-    ){
-        $tutor->name = $data['name'];
-        $tutor->age = $data['age'];
-        $tutor->rating = 0;
-        $tutor->subj_id = $data['subj_id'];
-    
-        // create the tutor
-        if($tutor->create()){
-            // set response code - 201 created
-            http_response_code(201);
-            echo json_encode(array("message" => "tutor was created."));
-        }
-    
-        else{
-            // set response code - 503 service unavailable
-            http_response_code(503);
-            echo json_encode(array("message" => "Unable to create tutor."));
-        }
-    }
-    else{
-        // set response code - 400 bad request
-        http_response_code(400);
-        echo $data . json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
-    }
 
-?>
+$database = new Database();
+$db = $database->getConnection();
+
+$tutor = new Tutor($db);
+
+//$data = json_decode(file_get_contents('php://input'));
+$data = $_POST;
+
+// make sure data is not empty
+if (
+	!empty($data['name']) &&
+	!empty($data['phone']) &&
+	!empty($data['age']) &&
+	!empty($data['type']) &&
+	!empty($data['lang']) &&
+	!empty($data['subject1'])
+) {
+	$tutor->name = $data['name'];
+	$tutor->phone = $data['phone'];
+	$tutor->age = $data['age'];
+	$tutor->rating = 0;
+	$tutor->lang = $data['lang'];
+	$tutor->type = $data['type'];
+	$tutor->stage = $data['stage'];
+	$tutor->subject1 = $data['subject1'];
+	$tutor->subject2 = isset($data['subject2']) ? $data['subject2'] : "";
+	$tutor->subject3 = isset($data['subject3']) ? $data['subject3'] : "";
+	$tutor->description = isset($data['description']) ? $data['description'] : "";
+
+	// create the tutor
+	if ($tutor->create()) {
+		// set response code - 201 created
+		http_response_code(201);
+		echo json_encode(array("message" => "tutor was created."));
+	} else {
+		// set response code - 503 service unavailable
+		http_response_code(503);
+		echo json_encode(array("message" => "Unable to create tutor."));
+	}
+} else {
+	// set response code - 400 bad request
+	http_response_code(400);
+	echo json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
+}
