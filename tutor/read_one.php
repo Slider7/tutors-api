@@ -34,11 +34,11 @@ if ($tutor->name != null) {
     "type" => $tutor->type,
     "lang" => $tutor->lang,
     "stage" => $tutor->stage,
-    "subject1" => $tutor->subject1,
-    "subject2" => $tutor->subject2,
-    "subject3" => $tutor->subject3,
+    "city_name" => $city_name,
+    "city_id" => $city_id,
     "description" => $tutor->description,
-    "subjects" => $tutor->subjects
+    "subjects" => $tutor->subjects,
+    "created" => $tutor->created
   );
   // код ответа - 200 OK 
   http_response_code(200);

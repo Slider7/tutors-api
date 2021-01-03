@@ -20,37 +20,35 @@ $data = $_POST;
 
 // make sure data is not empty
 if (
-	!empty($data['name']) &&
-	!empty($data['phone']) &&
-	!empty($data['age']) &&
-	!empty($data['type']) &&
-	!empty($data['lang']) &&
-	!empty($data['subject1'])
+  !empty($data['name']) &&
+  !empty($data['phone']) &&
+  !empty($data['age']) &&
+  !empty($data['type']) &&
+  !empty($data['lang']) &&
+  !empty($data['city_id'])
 ) {
-	$tutor->name = $data['name'];
-	$tutor->phone = $data['phone'];
-	$tutor->age = $data['age'];
-	$tutor->rating = 0;
-	$tutor->lang = $data['lang'];
-	$tutor->type = $data['type'];
-	$tutor->stage = $data['stage'];
-	$tutor->subject1 = $data['subject1'];
-	$tutor->subject2 = isset($data['subject2']) ? $data['subject2'] : "";
-	$tutor->subject3 = isset($data['subject3']) ? $data['subject3'] : "";
-	$tutor->description = isset($data['description']) ? $data['description'] : "";
+  $tutor->name = $data['name'];
+  $tutor->phone = $data['phone'];
+  $tutor->age = $data['age'];
+  $tutor->rating = 0;
+  $tutor->lang = $data['lang'];
+  $tutor->type = $data['type'];
+  $tutor->stage = $data['stage'];
+  $tutor->city_id = $data['city_id'];
+  $tutor->description = isset($data['description']) ? $data['description'] : "";
 
-	// create the tutor
-	if ($tutor->create()) {
-		// set response code - 201 created
-		http_response_code(201);
-		echo json_encode(array("message" => "tutor was created."));
-	} else {
-		// set response code - 503 service unavailable
-		http_response_code(503);
-		echo json_encode(array("message" => "Unable to create tutor."));
-	}
+  // create the tutor
+  if ($tutor->create()) {
+    // set response code - 201 created
+    http_response_code(201);
+    echo json_encode(array("message" => "tutor was created."));
+  } else {
+    // set response code - 503 service unavailable
+    http_response_code(503);
+    echo json_encode(array("message" => "Unable to create tutor."));
+  }
 } else {
-	// set response code - 400 bad request
-	http_response_code(400);
-	echo json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
+  // set response code - 400 bad request
+  http_response_code(400);
+  echo json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
 }

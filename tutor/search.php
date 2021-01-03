@@ -2,26 +2,33 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// include database and object files
+include_once '../config/core.php';
 include_once '../config/database.php';
 include_once '../objects/tutor.php';
 
-// instantiate database and tutor object
 $database = new Database();
 $db = $database->getConnection();
-// initialize object
+
 $tutor = new Tutor($db);
 
-$stmt = $tutor->read();
+// get keywords
+$keywords = array();
+$keywords['city'] = isset($_GET['city']) ? $_GET['city'] : '';
+$keywords['subject'] = isset($_GET['subject']) ? $_GET['subject'] : '';
+$keywords['lang'] = isset($_GET['lang']) ? $_GET['lang'] : '';
+$keywords['type'] = isset($_GET['type']) ? $_GET['type'] : '';
+
+// query tutors
+$stmt = $tutor->search($keywords);
 $num = $stmt->rowCount();
 
 // check if more than 0 record found
 if ($num > 0) {
+
   $tutors_arr = array();
   $tutors_arr["records"] = array();
 
   while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    // extract row - this will make $row['name'] to just $name only
     extract($row);
 
     $tutor_item = array(
@@ -43,15 +50,11 @@ if ($num > 0) {
     array_push($tutors_arr["records"], $tutor_item);
   }
 
-  // set response code - 200 OK
   http_response_code(200);
-  // show products data in json format
-  echo json_encode($tutors_arr, JSON_UNESCAPED_UNICODE);
+  echo json_encode($tutors_arr);
 } else {
-  // set response code - 404 Not found
   http_response_code(404);
-  // tell the user no products found
   echo json_encode(
-    array("message" => "No tutors found.")
+    array("message" => "Преподаватели не найдены.")
   );
 }

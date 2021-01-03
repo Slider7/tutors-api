@@ -1,7 +1,6 @@
 <?php
 class Tutor
 {
-  // database connection and table name
   private $conn;
   private $table_name = "tutors";
 
@@ -15,11 +14,10 @@ class Tutor
   public $lang;
   public $type;
   public $subjects;
-  public $subject1;
-  public $subject2;
-  public $subject3;
+  public $city_id;
+  public $city_name;
   public $description;
-
+  public $created;
 
   // constructor with $db as database connection
   public function __construct($db)
@@ -37,22 +35,15 @@ class Tutor
     return $stmt;
   }
 
-  // используется при заполнении формы обновления товара 
   function readOne()
   {
-    // запрос для чтения одной записи (тьютора) 
     $query = "SELECT * FROM tutors_view t 
                WHERE t.id = ?
                LIMIT 0,1";
 
-    // подготовка запроса 
     $stmt = $this->conn->prepare($query);
-
-    // привязываем id тьютора, который будет обновлен 
     $stmt->bindParam(1, $this->id);
-    // выполняем запрос 
     $stmt->execute();
-    // получаем извлеченную строку 
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (isset($row['name'])) {
@@ -63,25 +54,23 @@ class Tutor
       $this->rating = $row['rating'];
       $this->lang = $row['lang'];
       $this->stage = $row['stage'];
-      $this->subject1 = $row['subject1'];
-      $this->subject2 = $row['subject2'];
-      $this->subject3 = $row['subject3'];
+      $this->city_id = $row['city_id'];
+      $this->city_name = $row['city_name'];
       $this->description = $row['description'];
       $this->subjects = $row['subjects'];
+      $this->created = $row['created'];
     }
   }
 
   // create tutor
   function create()
   {
-    // query to insert record
     $query = "INSERT INTO
                 " . $this->table_name . "
             SET
                 name=:name, phone=:phone, age=:age, rating=:rating, type=:type, lang=:lang, stage=:stage,
-                subject1=:subject1, subject2=:subject2, subject3=:subject3, description=:description";
+                city_id=:city_id, description=:description";
 
-    // prepare query
     $stmt = $this->conn->prepare($query);
 
     // sanitize
@@ -92,9 +81,7 @@ class Tutor
     $this->lang = htmlspecialchars(strip_tags($this->lang));
     $this->type = htmlspecialchars(strip_tags($this->type));
     $this->stage = htmlspecialchars(strip_tags($this->stage));
-    $this->subject1 = htmlspecialchars(strip_tags($this->subject1));
-    $this->subject2 = htmlspecialchars(strip_tags($this->subject2));
-    $this->subject3 = htmlspecialchars(strip_tags($this->subject3));
+    $this->city_id = htmlspecialchars(strip_tags($this->city_id));
     $this->description = htmlspecialchars(strip_tags($this->description));
 
     // bind values
@@ -105,9 +92,7 @@ class Tutor
     $stmt->bindParam(":lang", $this->lang);
     $stmt->bindParam(":type", $this->type);
     $stmt->bindParam(":stage", $this->stage);
-    $stmt->bindParam(":subject1", $this->subject1);
-    $stmt->bindParam(":subject2", $this->subject2);
-    $stmt->bindParam(":subject3", $this->subject3);
+    $stmt->bindParam(":city_id", $this->city_id);
     $stmt->bindParam(":description", $this->description);
 
     // execute query
@@ -117,4 +102,102 @@ class Tutor
 
     return false;
   }
+
+  // метод update() - обновление тьютора 
+  function update()
+  {
+    $query =
+      "UPDATE $this->table_name " .
+      "SET
+          name=:name,
+          phone=:phone,
+          age=:age,
+          rating=:rating, 
+          type=:type, 
+          lang=:lang, 
+          stage=:stage,
+          city_id=:city_id, 
+          description=:description
+      WHERE 
+        id = :id";
+
+    // подготовка запроса 
+    $stmt = $this->conn->prepare($query);
+
+    // очистка 
+    $this->name = htmlspecialchars(strip_tags($this->name));
+    $this->phone = htmlspecialchars(strip_tags($this->phone));
+    $this->age = htmlspecialchars(strip_tags($this->age));
+    $this->rating = htmlspecialchars(strip_tags($this->rating));
+    $this->lang = htmlspecialchars(strip_tags($this->lang));
+    $this->type = htmlspecialchars(strip_tags($this->type));
+    $this->stage = htmlspecialchars(strip_tags($this->stage));
+    $this->city_id = htmlspecialchars(strip_tags($this->city_id));
+    $this->description = htmlspecialchars(strip_tags($this->description));
+    $this->id = htmlspecialchars(strip_tags($this->id));
+    // bind values
+    $stmt->bindParam(":name", $this->name);
+    $stmt->bindParam(":phone", $this->phone);
+    $stmt->bindParam(":age", $this->age);
+    $stmt->bindParam(":rating", $this->rating);
+    $stmt->bindParam(":lang", $this->lang);
+    $stmt->bindParam(":type", $this->type);
+    $stmt->bindParam(":stage", $this->stage);
+    $stmt->bindParam(":city_id", $this->city_id);
+    $stmt->bindParam(":description", $this->description);
+    $stmt->bindParam(':id', $this->id);
+
+    // выполняем запрос 
+    if ($stmt->execute()) {
+      return true;
+    }
+    return false;
+  }
+
+  function delete()
+  {
+    $query = "DELETE FROM " . $this->table_name . " WHERE id = ?";
+
+    $stmt = $this->conn->prepare($query);
+    $this->id = htmlspecialchars(strip_tags($this->id));
+    $stmt->bindParam(1, $this->id);
+
+    if ($stmt->execute()) {
+      return true;
+    }
+    return false;
+  }
+
+  // search
+  function search($keywords)
+  {
+    $query = "SELECT * FROM tutors_view t 
+              WHERE
+                t.city_name LIKE ? AND t.subjects LIKE ? AND t.lang LIKE ? AND t.type LIKE ?
+              ORDER BY
+                t.created DESC";
+
+    // prepare query statement
+    $stmt = $this->conn->prepare($query);
+    $city = sanitizeParam($keywords['city']);
+    $subject = sanitizeParam($keywords['subject']);
+    $lang = sanitizeParam($keywords['lang']);
+    $type = sanitizeParam($keywords['type']);
+    // bind
+    $stmt->bindParam(1, $city);
+    $stmt->bindParam(2, $subject);
+    $stmt->bindParam(3, $lang);
+    $stmt->bindParam(4, $type);
+
+    // execute query
+    $stmt->execute();
+
+    return $stmt;
+  }
+}
+
+function sanitizeParam($param)
+{
+  $cleanParam = htmlspecialchars(strip_tags($param));
+  return "%{$cleanParam}%";
 }
