@@ -15,10 +15,9 @@ $tutor = new Tutor($db);
 $stmt = $tutor->read();
 $num = $stmt->rowCount();
 
-// check if more than 0 record found
 if ($num > 0) {
   $tutors_arr = array();
-  $tutors_arr["records"] = array();
+  //$tutors_arr["records"] = array();
 
   while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     // extract row - this will make $row['name'] to just $name only
@@ -40,7 +39,7 @@ if ($num > 0) {
       "created" => $created
     );
 
-    array_push($tutors_arr["records"], $tutor_item);
+    array_push($tutors_arr, $tutor_item);
   }
 
   // set response code - 200 OK

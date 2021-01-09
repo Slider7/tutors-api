@@ -26,7 +26,7 @@ $num = $stmt->rowCount();
 if ($num > 0) {
 
   $tutors_arr = array();
-  $tutors_arr["records"] = array();
+//  $tutors_arr["records"] = array();
 
   while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     extract($row);
@@ -47,7 +47,7 @@ if ($num > 0) {
       "created" => $created
     );
 
-    array_push($tutors_arr["records"], $tutor_item);
+    array_push($tutors_arr, $tutor_item);
   }
 
   http_response_code(200);
