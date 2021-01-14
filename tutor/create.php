@@ -15,8 +15,8 @@ $db = $database->getConnection();
 
 $tutor = new Tutor($db);
 
-//$data = json_decode(file_get_contents('php://input'));
-$data = $_POST;
+$postData = file_get_contents('php://input');
+$data = json_decode($postData, true);
 
 // make sure data is not empty
 if (
@@ -38,10 +38,12 @@ if (
   $tutor->description = isset($data['description']) ? $data['description'] : "";
 
   // create the tutor
-  if ($tutor->create()) {
+  $last_id = $tutor->create();
+  
+  if ($last_id > 0) {
     // set response code - 201 created
     http_response_code(201);
-    echo json_encode(array("message" => "tutor was created."));
+    echo json_encode(array("message" => "id=$last_id"));
   } else {
     // set response code - 503 service unavailable
     http_response_code(503);

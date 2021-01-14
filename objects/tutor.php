@@ -95,12 +95,11 @@ class Tutor
     $stmt->bindParam(":city_id", $this->city_id);
     $stmt->bindParam(":description", $this->description);
 
+    $last_id = 0;
     // execute query
-    if ($stmt->execute()) {
-      return true;
-    }
-
-    return false;
+    if ($stmt->execute()) $last_id = $this->conn->lastInsertId();
+    
+    return $last_id;
   }
 
   // метод update() - обновление тьютора 
