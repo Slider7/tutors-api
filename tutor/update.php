@@ -39,7 +39,7 @@ if ($tutor->update()) {
   http_response_code(200);
 
   // сообщим пользователю 
-  echo json_encode(array("message" => "тьютор был обновлён."), JSON_UNESCAPED_UNICODE);
+  echo json_encode(array("message" => "Тьютор был обновлён."), JSON_UNESCAPED_UNICODE);
 }
 
 // если не удается обновить тьютор, сообщим пользователю 
@@ -49,5 +49,5 @@ else {
   http_response_code(503);
 
   // сообщение пользователю 
-  echo json_encode(array("message" => "Невозможно обновить тьютор."), JSON_UNESCAPED_UNICODE);
+  echo json_encode(array("message" => "Невозможно обновить тьютора."), JSON_UNESCAPED_UNICODE);
 }

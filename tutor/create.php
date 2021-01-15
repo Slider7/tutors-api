@@ -43,14 +43,14 @@ if (
   if ($last_id > 0) {
     // set response code - 201 created
     http_response_code(201);
-    echo json_encode(array("message" => "id=$last_id"));
+    echo json_encode(array("message" => $last_id));
   } else {
     // set response code - 503 service unavailable
     http_response_code(503);
-    echo json_encode(array("message" => "Unable to create tutor."));
+    echo json_encode(array("message" => "Не удалось сохранить преподавателя. Возможно, уже существует."));
   }
 } else {
   // set response code - 400 bad request
   http_response_code(400);
-  echo json_encode(array("message" => "Unable to create tutor. Data is incomplete."));
+  echo json_encode(array("message" => "Невозможно сохранить преподавателя. Недостаточно данных."));
 }
