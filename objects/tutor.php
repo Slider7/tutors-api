@@ -28,7 +28,7 @@ class Tutor
   // read all tutors with subjects
   function read()
   {
-    $query = "SELECT * FROM tutors_view";
+    $query = "SELECT * FROM tutors_view ORDER BY name";
     $stmt = $this->conn->prepare($query);
     $stmt->execute();
 
